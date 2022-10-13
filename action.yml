@@ -1,0 +1,32 @@
+name: "Setup Flutter SDK"
+description: "Setup the Flutter SDK, and add it to the PATH"
+branding:
+  icon: "triangle"
+  color: "blue"
+inputs:
+  version:
+    description: "The version to install: Default: 3.0.2"
+    required: false
+    default: "3.0.2"
+  channel:
+    description: "The version to install. Default: stable"
+    required: false
+    default: "stable"
+  cache:
+    description: 'Cache the installed Flutter SDK. Default: false'
+    required: false
+    default: "false"
+  cache-key:
+    description: "An explicit key for restoring and saving the Flutter SDK to/from cache"
+    required: false
+    default: "flutter"
+runs:
+  using: "composite"
+  steps:
+    - if: ${{ inputs.cache == 'true' }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ runner.tool_cache }}/flutter-${{ runner.os }}-${{ inputs.version }}-${{ runner.arch }}
+        key: flutter-action-setup-flutter-${{ runner.os }}-${{ inputs.version }}-${{ inputs.channel }}-${{ runner.arch }}-${{ inputs.cache-key }}
+    - run: $GITHUB_ACTION_PATH/setup.sh ${{ inputs.version }} ${{ inputs.channel }}
+      shell: bash
